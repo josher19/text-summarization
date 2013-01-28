@@ -1,0 +1,83 @@
+<script src="../lib/underscore-1.2.3.js"></script>  
+<script src="../lib/underscore.string-2.0.0.js"></script>   
+<script src="../lib/porter-stemmer.js"></script>
+<script src="../sum.js"></script>
+<style type="text/css">
+fieldset { width: 50%; background: #ddd; }
+fieldset legend { background: #eee; border-radius: 4px; border-top: 2px silver groove; border-left: 2px silver groove; box-shadow: 5px 5px 2px #888888; text-effect: capitalize;}
+.clear { clear: both }
+</style>
+<form name="myform">
+<fieldset><legend>Article</legend>
+<label for="corpus">Corpus:</label> 
+<br /><textarea required id="corpus" name="corpus" rows=12 cols=60 placeholder="Cut + Paste text here."></textarea>
+<br /><label for="nSentences">Sample Text:</label> <select id="samples" name="samples">
+<option></option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<br /><input type="button" value="Show Abstract" name="run1" id="run1"/>
+</fieldset>
+<fieldset><legend>Abstract</legend>
+<div id="results">Will display summary whenever form is updated.</div>
+</fieldset>
+<fieldset><legend>Options</legend>
+<label for="nSentences">Number of Sentences in Summary:</label> <select id="nSentences" name="nSentences">
+<option>1</option>
+<option>2</option>
+<option selected>3</option>
+<option>5</option>
+<option>8</option>
+<option>11</option>
+</select>
+<br /><label for="exclude">Exclude:</label>
+<input name="exclude" id="exclude" placeholder="Sentences to exclude." />
+<br /><label for="exclude">Emphasize:</label>
+<input name="emphasise" id="emphasise" placeholder="Sentences to emphasize." />
+<br /><input type="button" value="Show Abstract" name="run" id="run"/>
+</fieldset>
+</form>
+
+<br class="clear"/>
+<p><code>
+var abstract = sum({corpus:corpus,nSentences:nSentences,exclude:exclude,emphasise:emphasise}).summary + &quot;.&quot;;
+</code></p>
+
+<script>
+(function() {
+function getAbstract(myform) {
+    myform = myform || document.forms.myform;
+    var corpus = myform.corpus.value, nSentences= myform.nSentences.value - 0, exclude = myform.exclude.value.split("."), emphasise = myform.emphasise.value.split(".");
+    var abstract = sum({corpus:corpus,nSentences:nSentences,exclude:exclude,emphasise:emphasise}).summary + ".";
+    return abstract;
+}
+function showAbstract(ev) {
+    var results = document.getElementById('results');
+    results.innerText = getAbstract();
+    results.title = results.innerText.length + " chracters";
+}
+function getScriptText(ev) {
+    var where = '../tests/browser/corpora/', 
+        num = this.value,
+        theSource = where + num + ".js",
+        scripty = document.createElement('script'),
+        loader = function() { myform.corpus.value = (corpora[num]||{text:""}).text; showAbstract();}
+    if (!num) { return myform.corpus.value  = "";  }
+    scripty.src = theSource;
+    scripty.onload = loader;
+    scripty.addEventListener('load', loader);
+    document.body.appendChild(scripty);
+}
+var myform = document.forms.myform;
+myform.samples.onchange = getScriptText;
+myform.nSentences.onchange = 
+    myform.run1.onclick = 
+        myform.run.onclick = 
+            showAbstract;
+
+})(this);
+</script>

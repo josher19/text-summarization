@@ -10,7 +10,7 @@
 		};
 		
 		// regexes
-		var sentenceDelimiter = /[.!?;]/;
+		var sentenceDelimiter = /[.!?;]\s?/;
 		var nGramDelimiter = /[.,!?;]/;
 		var wordDelimiter = /\s/mg;
 		var matchJunk = /["#$%&'()*+,\-\/:<=>@\[\\\]\^_`{|}]/mg ;
@@ -188,7 +188,7 @@
 				if (stop) break; 
 			}//~ end while
 			return {
-				'summary': summary.join('.'),
+				'summary': summary.join('. '),
 				'sentences': summary
 			};
 		};
